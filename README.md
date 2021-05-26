@@ -56,24 +56,52 @@ ALTER TABLE [dbo].[APITestingParam] ADD  CONSTRAINT [DF_APITestingParam_DataVeri
 GO
 ```
 
-| 欄位名稱          | 格式          | 說明                                                                                                                                                                          |
-| ----------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| OBJECTID          | int           | 流水編號                                                                                                                                                                      |
-| Type              | nvarchar(50)  | API 的類型，目前 5 種，分別為：HLUPAPI (內部使用 API)、oDataAPI (外部使用 API)、OtherAPI (介接外部的 API)、ArcGISServer (地圖服務)、ArcGISServer_GP (地圖資料處理服務)        |
-| APIInfo           | nvarchar(200) | 描述 API 的內容，中文                                                                                                                                                         |
-| ContentType       | nvarchar(20)  | Request 傳遞方式，目前有三種：JSON、XML、IMAGE-jpeg                                                                                                                           |
-| RequestMethod     | nvarchar(10)  | Request 方法，目前有：POST、GET                                                                                                                                               |
-| URL               | nvarchar(MAX) | API 路徑，注意!! 這不是唯一值，不能當作 Key                                                                                                                                   |
-| JsonData          | nvarchar(MAX) | "傳遞的資料，全部以 JSON 格式表示，程式會自己判斷 ParamMethod 再轉換後發 Request 若不用傳資料則是空白"                                                                        |
-| ParamMethod       | nvarchar(30)  | "資料傳遞格式，目前有 4 種                                                                                                                                                    | RequestPayload:一般的 Post 傳遞 JSON 內容; QueryString:路徑 ?後 帶參數; RouteParameter:直接將參數帶進路徑; FormData:XML 格式傳遞" |
-| ExpectResponse    | nvarchar(MAX) | 預期回來的資料，若有輸入值則會驗證值是否相同，若是"..."表示只會會驗證是否有資料、若沒有填寫的資料則不驗證，這個欄位可能會很長~                                                |
-| HeaderTokenConfig | nvarchar(50)  | "API 所需要的 Token，目前有三種 + 空白： PRIVATEAPI_TOKEN:內部 API 使用的 Token ; PUBLICAPI_TOKEN:外部 API 使用的 Token; ARCGISSERVER_TOKEN:地圖服務使用的 Token"; Monitoring | bit                                                                                                                               | 是否要監測，1 : 是、0 : 否 |
-| Frequency         | int           | 監測頻率 (單位：分鐘)                                                                                                                                                         |
-| Status            | int           | 回傳狀態，正常應該要 200，若 Timeout 等抓不到回傳內容，則會顯示-1，但其他狀態就是看回傳哪個狀態碼"                                                                            |
-| LastUpdate        | datetime      | 最後一次監測回傳更新時間                                                                                                                                                      |
-| DataVerified      | bit           | 最後一次回傳是否有通過驗證 (有些雖然 Status 狀態是 200，但資料格式不符合，這邊會顯示 0)                                                                                       |
-| Memo              | nvarchar(256) | 備註，通常是在有不符合資料格式的時候才會有值                                                                                                                                  |
-| DuringTime        | float         | 這個 Request 從發出去到接收中間經過的時間 (單位：秒)                                                                                                                          |
+### 欄位描述
+
+-   Type - nvarchar(50)
+    -   API 的類型，目前 5 種，分別為：
+        1. HLUPAPI (內部使用 API)
+        2. oDataAPI (外部使用 API)
+        3. OtherAPI (介接外部的 API)
+        4. ArcGISServer (地圖服務)
+        5. ArcGISServer_GP (地圖資料處理服務)
+-   APIInfo - nvarchar(200)
+    -   描述 API 的內容，中文
+-   ContentType - nvarchar(20)
+    -   Request 傳遞方式，目前有三種：JSON、XML、IMAGE-jpeg
+-   RequestMethod - nvarchar(10)
+    -   Request 方法，目前有：POST、GET
+-   URL - nvarchar(MAX)
+    -   API 路徑，注意!! 這不是唯一值，不能當作 Key
+-   JsonData - nvarchar(MAX)
+    -   "傳遞的資料，全部以 JSON 格式表示，程式會自己判斷 ParamMethod 再轉換後發 Request 若不用傳資料則是空白"
+-   ParamMethod - nvarchar(30)
+    -   "資料傳遞格式，目前有 4 種。
+        1. RequestPayload:一般的 Post 傳遞 JSON 內容;
+        2. QueryString:路徑 ?後 帶參數;
+        3. RouteParameter:直接將參數帶進路徑;
+        4. FormData:XML 格式傳遞"
+-   ExpectResponse - nvarchar(MAX)
+    -   預期回來的資料，若有輸入值則會驗證值是否相同，若是"..."表示只會會驗證是否有資料、若沒有填寫的資料則不驗證，這個欄位可能會很長~
+-   HeaderTokenConfig - nvarchar(50)
+    -   "API 所需要的 Token，目前有三種 + 空白：
+        1. PRIVATEAPI_TOKEN:內部 API 使用的 Token ;
+        2. PUBLICAPI_TOKEN:外部 API 使用的 Token;
+        3. ARCGISSERVER_TOKEN:地圖服務使用的 Token";
+-   Monitoring - bit
+    -   是否要監測，1 : 是、0 : 否
+-   Frequency - int
+    -   監測頻率 (單位：分鐘)
+-   Status - int
+    -   回傳狀態，正常應該要 200，若 Timeout 等抓不到回傳內容，則會顯示-1，但其他狀態就是看回傳哪個狀態碼"
+-   LastUpdate - datetime
+    -   最後一次監測回傳更新時間
+-   DataVerified - bit
+    -   最後一次回傳是否有通過驗證 (有些雖然 Status 狀態是 200，但資料格式不符合，這邊會顯示 0)
+-   Memo - nvarchar(256)
+    -   備註，通常是在有不符合資料格式的時候才會有值
+-   DuringTime - float
+    -   這個 Request 從發出去到接收中間經過的時間 (單位：秒)
 
 ---
 
