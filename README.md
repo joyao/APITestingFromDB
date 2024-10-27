@@ -4,9 +4,9 @@
 
 此程式已開發到一個階段，後續不太會有太大的更動。
 
-主要使用的語言：`Node.js`, `typescript`
+主要使用的語言：**Node.js**, **typescript**
 
-執行環境所需套件：`Node.js`, `SQL Server`, `ArcGIS Server`, `Mail Server`
+執行環境所需套件：**Node.js**, **SQL Server**, **ArcGIS Server**, **Mail Server**
 
 ## 安裝套件
 
